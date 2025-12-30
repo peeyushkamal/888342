@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>For My Cutiepie</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        :root { --primary-pink: #ff4d6d; --paper-color: #fffaf0; }
+        
+        body, html { 
+            margin: 0; padding: 0; height: 100%; overflow: hidden; 
+            font-family: 'Poppins', sans-serif; 
+            background: linear-gradient(to bottom, #0f0c29, #302b63);
+            color: white; touch-action: none;
+            -webkit-user-select: none; user-select: none;
+        }
+
+        /* Background Floating Elements */
+        #heart-container { position: fixed; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+        .heart {
+            position: absolute; color: rgba(255, 77, 109, 0.4);
+            font-size: 20px; animation: floatUp 5s linear infinite;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(105vh) scale(1); opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+        }
+
+        /* Screen Management */
+        .screen { 
+            position: absolute; width: 100%; height: 100%;
+            display: none; flex-direction: column; 
+            align-items: center; justify-content: center; text-align: center; padding: 20px;
+            box-sizing: border-box; z-index: 1;
+        }
+        .active { display: flex; animation: fadeIn 0.8s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        h2 { font-family: 'Dancing Script', cursive; color: #ffb3c1; font-size: 2.5rem; margin: 10px 0; }
+
+        /* Section 1: Hold Button */
+        #hold-btn { 
+            width: 100px; height: 100px; background: var(--primary-pink); 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            font-size: 45px; cursor: pointer; z-index: 2;
+            box-shadow: 0 0 25px var(--primary-pink);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+        
+        .hold-container { position: relative; width: 160px; height: 160px; display: flex; align-items: center; justify-content: center; }
+        .progress-ring { position: absolute; width: 140px; height: 140px; transform: rotate(-90deg); }
+        .progress-ring circle {
+            fill: none; stroke: white; stroke-width: 6;
+            stroke-dasharray: 440; stroke-dashoffset: 440;
+            transition: stroke-dashoffset 0.1s linear;
+        }
+
+        /* Section 2: Cards */
+        .card-container { position: relative; width: 280px; height: 350px; margin-top: 20px; }
+        .distraction-card { 
+            position: absolute; width: 100%; height: 100%; 
+            background: white; color: #333; border-radius: 20px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-weight: 600; font-size: 1.5rem; cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s;
+        }
+
+        /* Section 3: Ticket */
+        .ticket { 
+            background: linear-gradient(135deg, #ffd700, #ffae00); 
+            color: #2d2d2d; padding: 30px; border-radius: 15px; 
+            border: 4px dashed #fff; box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+        }
+        .btn { margin-top: 25px; padding: 12px 25px; border-radius: 25px; border: 2px solid white; background: transparent; color: white; font-weight: bold; cursor: pointer; }
+
+        /* Section 4: The Love Book */
+        .book-container { perspective: 1200px; padding: 20px; }
+        .book {
+            width: 320px; height: 420px;
+            position: relative; transform-style: preserve-3d;
+            transform: rotateY(-10deg) rotateX(5deg);
+            display: flex;
+        }
+        .page {
+            position: absolute; width: 100%; height: 100%;
+            background: var(--paper-color); border: 1px solid #d8a7b1;
+            padding: 25px; box-sizing: border-box;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.05);
+        }
+        .page-left {
+            position: relative; border-radius: 10px 0 0 10px;
+            transform-origin: right; transform: rotateY(-20deg);
+            background: #fff; border-right: 2px solid #ddd;
+            display: flex; flex-direction: column; justify-content: center;
+            box-shadow: -10px 10px 20px rgba(0,0,0,0.3);
+        }
+        .page-right {
+            position: relative; border-radius: 0 10px 10px 0;
+            display: flex; flex-direction: column; justify-content: center;
+            box-shadow: 10px 10px 20px rgba(0,0,0,0.3);
+            text-align: left;
+        }
+        .book-text { color: #444; font-size: 1rem; line-height: 1.5; margin: 0; }
+        .signature { 
+            font-family: 'Dancing Script', cursive; 
+            color: var(--primary-pink); font-size: 1.8rem; margin-top: 15px; 
+        }
+        .chapter-title { font-size: 0.8rem; color: #999; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+    <div id="heart-container"></div>
+
+    <section id="s1" class="screen active">
+        <h2>A little surprise...</h2>
+        <p>Hold the heart to begin</p>
+        <div class="hold-container">
+            <svg class="progress-ring"><circle id="circle" cx="70" cy="70" r="65"></circle></svg>
+            <div id="hold-btn">❤️</div>
+        </div>
+    </section>
+
+    <section id="s2" class="screen">
+        <h2>Clear the distractions</h2>
+        <p>Tap them to throw them away</p>
+        <div class="card-container">
+            <div class="distraction-card" style="z-index:3; background:#ff8fa3" onclick="dismiss(this)">Distance ✈️</div>
+            <div class="distraction-card" style="z-index:2; background:#ffb3c1" onclick="dismiss(this)">Bad Days ☁️</div>
+            <div class="distraction-card" style="z-index:1; background:#ffccd5" onclick="dismiss(this)">Stress 😫</div>
+            <div class="distraction-card" style="z-index:3; background:#ff8fa3" onclick="dismiss(this)">Sadness✈️</div>
+            <div id="gift" style="z-index:0; font-size:80px; display:none; cursor:pointer; animation: pulse 1s infinite;" onclick="nextScreen(3)">🎁</div>
+        </div>
+    </section>
+
+    <section id="s3" class="screen">
+        <div class="ticket">
+            <h3 style="margin:0">GOLDEN TICKET</h3>
+            <p>VALID FOR ALL OF 2026</p>
+            <hr style="border: 1px dashed rgba(0,0,0,0.1)">
+            <h2 style="color:#2d2d2d">Unlimited Hugs</h2>
+            <p><small>Only for my Cutiepie</small></p>
+        </div>
+        <button class="btn" onclick="nextScreen(4)">CLAIM TICKET ></button>
+    </section>
+
+    <section id="s4" class="screen">
+        <div class="book-container">
+            <div class="book">
+                <div class="page page-left">
+                    <div class="chapter-title">Chapter 2026 with my nandhu </div>
+                    <div style="font-size: 4rem;">✨</div>
+                    <p style="color: #666; font-style: italic;">Our story continues...</p>
+                </div>
+                <div class="page page-right">
+                    <h2 style="color:#333; font-size: 1.8rem; margin: 0 0 10px 0;">Happy 2026!</h2>
+                    <p class="book-text">
+                        I hope this year is as beautiful as you are. 
+                        I can't wait to spend every second of it with you Nandhusee.
+                        You are my happyness my emotions .
+                    </p>
+                    <div class="signature">I love you Nandhuse ❤️💖</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Background Animation
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = ['❤️','💖','✨','🌸'][Math.floor(Math.random()*4)];
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 2 + 3) + 's';
+            document.getElementById('heart-container').appendChild(heart);
+            setTimeout(() => heart.remove(), 5000);
+        }
+        setInterval(createHeart, 400);
+
+        // Progress Logic
+        let holdInterval;
+        let progress = 0;
+        const circle = document.getElementById('circle');
+        const btn = document.getElementById('hold-btn');
+
+        function startHold(e) {
+            e.preventDefault();
+            holdInterval = setInterval(() => {
+                progress += 2;
+                circle.style.strokeDashoffset = 440 - (progress / 100) * 440;
+                if (progress >= 100) {
+                    clearInterval(holdInterval);
+                    nextScreen(2);
+                }
+            }, 30);
+        }
+
+        function endHold() {
+            clearInterval(holdInterval);
+            progress = 0;
+            circle.style.strokeDashoffset = 440;
+        }
+
+        btn.addEventListener('mousedown', startHold);
+        btn.addEventListener('touchstart', startHold);
+        window.addEventListener('mouseup', endHold);
+        window.addEventListener('touchend', endHold);
+
+        // Interaction Logic
+        let count = 0;
+        function dismiss(el) {
+            el.style.transform = "translateX(500px) rotate(45deg)";
+            el.style.opacity = "0";
+            count++;
+            if(count === 3) {
+                setTimeout(() => {
+                    document.getElementById('gift').style.display = 'block';
+                }, 500);
+            }
+        }
+
+        function nextScreen(num) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('s' + num).classList.add('active');
+            
+            if(num === 3) {
+                confetti({
+                    particleCount: 150,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#ff4d6d', '#ffb3c1', '#ffd700']
+                });
+            }
+        }
+    </script>
+</body>
+</html>
